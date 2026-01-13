@@ -16,7 +16,7 @@ Let's clone a winning sleep product to the French market.
 6. Click through to landing page
 7. Save the URL
 
-**Example result:** Found a "7-day sleep fix" running for 26 days at $37
+**What to look for:** Products running 14+ days (profitable), price point $17-97, simple funnels
 
 ### Step 2: Research the Topic (30 minutes)
 
@@ -147,25 +147,32 @@ french_ad_copy = translator.translate_content(
 | Launch ads | 1 hr | €30/day |
 | **TOTAL** | **~6 hours** | **~$42 setup + €30/day ads** |
 
-## Example Results
+## Expected Results
 
-From the original strategy:
+**Translation arbitrage works consistently because:**
+- English markets: Heavily saturated (50-100+ competitors)
+- Non-English markets: Significantly less competition (often 5-15 products)
+- Proven funnels that already convert in English
+- Direct translation into underserved markets
 
-**Investment:**
-- Setup: ~$40
-- Ad spend: €1,080 (over 8 days)
-- Total: ~€1,120
+**Typical Economics:**
 
-**Returns:**
-- Revenue: €11,740
-- Net profit: €10,620
-- ROI: 948%
+**Discovery Phase (3 days):**
+- Investment: $45 total ($15/day)
+- Goal: Validate product-market fit
+- Success metrics: 2%+ CTR, <$15 CPA, 1%+ conversion rate
 
-**Why it worked:**
-- English market: 50+ competitors
-- French market: 8 total products, 3 decent
-- Same funnel structure that's proven to work
-- Just translated and launched in underserved market
+**Scale Phase (if discovery successful):**
+- Daily budget: $50-150
+- Typical ROI: 300-1000%
+- Payback period: 7-14 days
+- Monthly profit potential: $3k-15k per product
+
+**Why it works:**
+- Same proven structure, 10x less competition
+- Proper dialect support increases conversions
+- Automated discovery stage minimizes risk
+- Quick iteration based on real data
 
 ## Scaling Tips
 

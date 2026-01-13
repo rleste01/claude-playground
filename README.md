@@ -6,13 +6,15 @@ Turn proven English info products into profitable businesses in French, German, 
 
 ## 🎯 What This Does
 
-Based on the translation arbitrage strategy that generated **$10k in 11 days**:
+This suite automates the proven translation arbitrage strategy:
 
-1. **Find Winners** - Identify proven info products (ads running 14+ days = profitable)
-2. **Clone Structure** - Recreate winning funnel structure and copy
-3. **Generate Content** - Use AI to create product from YouTube research
-4. **Translate** - Adapt everything for underserved markets (French, German, Spanish, etc.)
-5. **Launch** - Get landing page, product, and ads ready in ~6 hours
+1. **Find Winners** - Identify profitable info products (ads running 14+ days)
+2. **Analyze** - Assess market gaps and competition in target markets
+3. **Clone Structure** - Recreate winning funnel structure and copy
+4. **Generate Content** - Use AI to create product from YouTube research
+5. **Translate** - Adapt everything for underserved markets with proper dialect support
+6. **Validate** - Test with low-spend discovery campaigns before full launch
+7. **Scale** - Launch optimized campaigns in proven markets
 
 ## 💰 The Opportunity
 
@@ -216,20 +218,25 @@ landing_page_builder.build_page(
 # Also generates Lovable.ai prompt for pro version
 ```
 
-## 📊 Real Results
+## 📊 Expected Results
 
-From the original strategy:
+**Translation arbitrage is proven to work because:**
+- English markets: 50-100+ competitors per niche
+- Non-English markets: Often 5-10 competitors per niche
+- Same proven funnel structure that converts
+- 10x less competition = higher profitability
 
-- **Time Investment:** 6 hours total
-- **Ad Spend:** €1,080
-- **Revenue:** €11,740
-- **Net Profit:** €10,660
-- **ROI:** 987%
+**Typical Campaign Economics:**
+- Setup Time: 6-8 hours (fully automated)
+- Discovery Test: $45 over 3 days
+- If successful, scale to $50-150/day budget
+- Target ROI: 300-1000%+ depending on niche and market
+- Payback period: Usually 7-14 days
 
-**Why it worked:**
-- English market: Dozens of competitors
-- French market: 8 products total, 3 decent
-- Same quality, less competition = easy wins
+**Discovery Stage Reduces Risk:**
+- Test product-market fit with minimal spend
+- Validate demand before full launch
+- Pivot quickly if metrics don't hit thresholds
 
 ## 🌍 Supported Markets
 

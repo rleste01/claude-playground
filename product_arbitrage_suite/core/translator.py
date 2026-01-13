@@ -1,49 +1,95 @@
-"""Translation and localization for different markets."""
+"""Translation and localization for different markets with dialect support."""
 
 from typing import Dict, Optional
 from ..utils.ai_helper import AIHelper
 
 
 class Translator:
-    """Translate content and funnels for new markets."""
+    """Translate content and funnels for new markets with proper dialect handling."""
 
-    # Price adjustments for different markets (based on purchasing power)
-    MARKET_CONFIG = {
-        'french': {
-            'languages': ['french', 'fr'],
-            'countries': ['france', 'belgium', 'switzerland', 'canada'],
-            'currency': 'EUR',
-            'currency_symbol': '€',
-            'price_multiplier': 0.9,
+    # Dialect-specific translation guidelines
+    DIALECT_GUIDELINES = {
+        'brazilian': {
+            'language': 'portuguese',
+            'full_name': 'Brazilian Portuguese',
+            'notes': 'Use Brazilian Portuguese with informal "você" form, Brazilian idioms and local expressions',
+            'currency': 'BRL',
+            'currency_symbol': 'R$',
+            'price_multiplier': 0.4,
+            'examples': 'Use "tá" instead of "está", "legal" for "cool", Brazilian vocabulary and slang'
         },
-        'german': {
-            'languages': ['german', 'de'],
-            'countries': ['germany', 'austria', 'switzerland'],
-            'currency': 'EUR',
-            'currency_symbol': '€',
-            'price_multiplier': 0.95,
-        },
-        'spanish': {
-            'languages': ['spanish', 'es'],
-            'countries': ['spain', 'mexico', 'argentina', 'colombia'],
-            'currency': 'EUR',
-            'currency_symbol': '€',
-            'price_multiplier': 0.7,
-        },
-        'italian': {
-            'languages': ['italian', 'it'],
-            'countries': ['italy'],
-            'currency': 'EUR',
-            'currency_symbol': '€',
-            'price_multiplier': 0.85,
-        },
-        'portuguese': {
-            'languages': ['portuguese', 'pt'],
-            'countries': ['portugal', 'brazil'],
+        'european': {
+            'language': 'portuguese',
+            'full_name': 'European Portuguese',
+            'notes': 'Use European Portuguese with more formal register, Portuguese idioms',
             'currency': 'EUR',
             'currency_symbol': '€',
             'price_multiplier': 0.65,
-        }
+            'examples': 'Use more formal constructions, "está" instead of "tá", European vocabulary'
+        },
+        'latin_american': {
+            'language': 'spanish',
+            'full_name': 'Latin American Spanish',
+            'notes': 'Use neutral Latin American Spanish, avoid Spain-specific terms like "vosotros"',
+            'currency': 'USD',
+            'currency_symbol': '$',
+            'price_multiplier': 0.5,
+            'examples': 'Use "computadora" not "ordenador", "ustedes" not "vosotros", Latin American vocabulary'
+        },
+        'european_spanish': {
+            'language': 'spanish',
+            'full_name': 'European Spanish (Spain)',
+            'notes': 'Use European Spanish with vosotros form, Spain-specific terms',
+            'currency': 'EUR',
+            'currency_symbol': '€',
+            'price_multiplier': 0.7,
+            'examples': 'Use "ordenador" not "computadora", vosotros conjugations, Spanish vocabulary'
+        },
+        'mexican': {
+            'language': 'spanish',
+            'full_name': 'Mexican Spanish',
+            'notes': 'Use Mexican Spanish with local slang and cultural references',
+            'currency': 'MXN',
+            'currency_symbol': '$',
+            'price_multiplier': 0.45,
+            'examples': 'Use Mexican vocabulary, local expressions, familiar tone'
+        },
+        'canadian': {
+            'language': 'french',
+            'full_name': 'Canadian French (Québécois)',
+            'notes': 'Use Québécois expressions and Canadian French vocabulary',
+            'currency': 'CAD',
+            'currency_symbol': '$',
+            'price_multiplier': 0.75,
+            'examples': 'Use Québécois terms, Canadian French expressions, local idioms'
+        },
+        'european_french': {
+            'language': 'french',
+            'full_name': 'European French',
+            'notes': 'Use standard European French without regional variations',
+            'currency': 'EUR',
+            'currency_symbol': '€',
+            'price_multiplier': 0.9,
+            'examples': 'Standard French vocabulary and grammar'
+        },
+        'swiss': {
+            'language': 'german',
+            'full_name': 'Swiss German (Standard)',
+            'notes': 'Use Standard German with Swiss vocabulary preferences, avoid pure Schwiizerdütsch',
+            'currency': 'CHF',
+            'currency_symbol': 'CHF',
+            'price_multiplier': 1.1,
+            'examples': 'Swiss German vocabulary in Standard German, avoid dialect forms'
+        },
+        'standard': {
+            'language': None,  # Will be set based on language
+            'full_name': 'Standard',
+            'notes': 'Use standard form of the language',
+            'currency': 'EUR',
+            'currency_symbol': '€',
+            'price_multiplier': 0.85,
+            'examples': 'Standard vocabulary and grammar'
+        },
     }
 
     def __init__(self, ai_helper: Optional[AIHelper] = None):
@@ -59,67 +105,77 @@ class Translator:
         self,
         funnel_blueprint: Dict,
         target_language: str,
+        dialect: Optional[str] = None,
         adjust_price: bool = True
     ) -> Dict:
         """
-        Translate a complete funnel to a new language.
+        Translate a complete funnel to a new language with dialect support.
 
         Args:
             funnel_blueprint: Funnel blueprint from FunnelAnalyzer
             target_language: Target language
+            dialect: Specific dialect (e.g., 'brazilian', 'latin_american')
             adjust_price: Whether to adjust price for local market
 
         Returns:
             Translated funnel blueprint
         """
+        dialect_info = self._get_dialect_info(target_language, dialect)
+
         print(f"\n🌍 Translating Funnel")
-        print(f"   Target Language: {target_language}")
+        print(f"   Target: {dialect_info['full_name']}")
 
         translated = funnel_blueprint.copy()
         translated['language'] = target_language
+        translated['dialect'] = dialect
 
         components = funnel_blueprint['components']
 
         # Translate headline
         print("   Translating headline...")
-        translated['components']['headline'] = self.ai_helper.translate_content(
+        translated['components']['headline'] = self._translate_with_dialect(
             components['headline'],
             target_language,
+            dialect,
             'headline'
         )
 
         # Translate subheadline
         if components.get('subheadline'):
             print("   Translating subheadline...")
-            translated['components']['subheadline'] = self.ai_helper.translate_content(
+            translated['components']['subheadline'] = self._translate_with_dialect(
                 components['subheadline'],
                 target_language,
+                dialect,
                 'subheadline'
             )
 
         # Translate bullets
         print("   Translating bullets...")
         bullets_text = '\n'.join(components['bullets'])
-        translated_bullets = self.ai_helper.translate_content(
+        translated_bullets = self._translate_with_dialect(
             bullets_text,
             target_language,
+            dialect,
             'bullet points'
         )
-        translated['components']['bullets'] = translated_bullets.split('\n')
+        translated['components']['bullets'] = [b.strip() for b in translated_bullets.split('\n') if b.strip()]
 
         # Translate CTA
         print("   Translating CTA...")
-        translated['components']['cta'] = self.ai_helper.translate_content(
+        translated['components']['cta'] = self._translate_with_dialect(
             components['cta'],
             target_language,
+            dialect,
             'call-to-action button'
         )
 
         # Adjust price
         if adjust_price and components.get('price'):
-            new_price = self.adjust_price_for_market(
+            new_price = self.adjust_price_for_dialect(
                 components['price'],
-                target_language
+                target_language,
+                dialect
             )
             translated['components']['price'] = new_price
             print(f"   Adjusted price: {components['price']} → {new_price}")
@@ -131,20 +187,24 @@ class Translator:
     def translate_product_content(
         self,
         content: str,
-        target_language: str
+        target_language: str,
+        dialect: Optional[str] = None
     ) -> str:
         """
-        Translate product content to a new language.
+        Translate product content to a new language with dialect support.
 
         Args:
             content: Original content
             target_language: Target language
+            dialect: Specific dialect
 
         Returns:
             Translated content
         """
+        dialect_info = self._get_dialect_info(target_language, dialect)
+
         print(f"\n🌍 Translating Product Content")
-        print(f"   Target Language: {target_language}")
+        print(f"   Target: {dialect_info['full_name']}")
         print(f"   Content Length: {len(content)} characters")
 
         # Split content into chunks if too long
@@ -155,9 +215,10 @@ class Translator:
 
         for i, chunk in enumerate(chunks, 1):
             print(f"   Translating chunk {i}/{len(chunks)}...")
-            translated_chunk = self.ai_helper.translate_content(
+            translated_chunk = self._translate_with_dialect(
                 chunk,
                 target_language,
+                dialect,
                 'product content'
             )
             translated_chunks.append(translated_chunk)
@@ -168,17 +229,78 @@ class Translator:
 
         return translated_content
 
-    def adjust_price_for_market(
+    def _translate_with_dialect(
+        self,
+        content: str,
+        language: str,
+        dialect: Optional[str],
+        content_type: str
+    ) -> str:
+        """Translate content with dialect-specific instructions."""
+        dialect_info = self._get_dialect_info(language, dialect)
+
+        # Build dialect-aware prompt
+        dialect_instruction = ""
+        if dialect and dialect != 'standard':
+            dialect_instruction = f"""
+IMPORTANT DIALECT REQUIREMENTS:
+- Target dialect: {dialect_info['full_name']}
+- {dialect_info['notes']}
+- Examples: {dialect_info['examples']}
+- Make it sound authentic to native speakers of this specific dialect
+"""
+
+        prompt = f"""Translate this {content_type} to {dialect_info['full_name']}.
+
+{dialect_instruction}
+
+CRITICAL REQUIREMENTS:
+- Maintain the same emotional intensity and persuasion
+- Keep the same structure and formatting
+- Adapt idioms naturally (don't translate literally)
+- Preserve any formatting like bullets, numbers, headings
+- Make it sound native and natural, not robotic or awkward
+- Match the tone and style of the original
+
+CONTENT TO TRANSLATE:
+{content}
+
+Provide ONLY the translation, no explanations or meta-commentary."""
+
+        return self.ai_helper.generate(prompt, max_tokens=4000)
+
+    def _get_dialect_info(self, language: str, dialect: Optional[str]) -> Dict:
+        """Get dialect information."""
+        if dialect and dialect in self.DIALECT_GUIDELINES:
+            info = self.DIALECT_GUIDELINES[dialect].copy()
+            if not info['language']:
+                info['language'] = language
+            return info
+
+        # Default to standard dialect
+        return {
+            'language': language,
+            'full_name': language.title(),
+            'notes': f'Use standard {language}',
+            'currency': 'EUR',
+            'currency_symbol': '€',
+            'price_multiplier': 0.8,
+            'examples': 'Standard vocabulary'
+        }
+
+    def adjust_price_for_dialect(
         self,
         original_price: str,
-        target_market: str
+        language: str,
+        dialect: Optional[str] = None
     ) -> str:
         """
-        Adjust price for local market purchasing power.
+        Adjust price for local market purchasing power with dialect support.
 
         Args:
             original_price: Original price (e.g., "$27")
-            target_market: Target market/language
+            language: Target language
+            dialect: Specific dialect
 
         Returns:
             Adjusted price with appropriate currency
@@ -192,80 +314,34 @@ class Translator:
 
         price_value = float(price_match.group(1))
 
-        # Get market config
-        market_config = self.MARKET_CONFIG.get(target_market.lower())
-
-        if not market_config:
-            # Default: keep same price
-            return original_price
+        # Get dialect info
+        dialect_info = self._get_dialect_info(language, dialect)
 
         # Apply multiplier
-        adjusted_price = price_value * market_config['price_multiplier']
+        adjusted_price = price_value * dialect_info['price_multiplier']
 
-        # Round to nearest .99 or .00
+        # Round to nearest .99, .97, or .00
         adjusted_price = round(adjusted_price)
 
         # Format with currency
-        currency_symbol = market_config['currency_symbol']
+        currency_symbol = dialect_info['currency_symbol']
+
         return f"{currency_symbol}{adjusted_price}"
 
-    def get_market_info(self, target_market: str) -> Dict:
+    def get_available_dialects(self, language: Optional[str] = None) -> Dict:
         """
-        Get information about a target market.
+        Get available dialects, optionally filtered by language.
 
         Args:
-            target_market: Target market/language
+            language: Optional language to filter by
 
         Returns:
-            Market configuration
+            Dictionary of available dialects
         """
-        return self.MARKET_CONFIG.get(target_market.lower(), {})
+        if language:
+            return {
+                k: v for k, v in self.DIALECT_GUIDELINES.items()
+                if v['language'] == language or v['language'] is None
+            }
 
-    def polish_translation(
-        self,
-        translated_content: str,
-        target_language: str,
-        budget: float = 40
-    ) -> str:
-        """
-        Instructions for polishing translation with human help.
-
-        Args:
-            translated_content: AI-translated content
-            target_language: Target language
-            budget: Budget for human polishing (USD)
-
-        Returns:
-            Instructions string
-        """
-        instructions = f"""
-📝 Translation Polishing Required
-
-Your AI-translated content is ready but should be polished by a native speaker.
-
-TASK: Clean up AI translation to sound natural
-TARGET LANGUAGE: {target_language}
-BUDGET: ${budget}
-TIME ESTIMATE: 1-2 hours
-
-WHERE TO FIND HELP:
-1. Upwork.com - Search "{target_language} proofreader"
-2. Fiverr.com - Search "proofread {target_language}"
-3. r/translator on Reddit
-
-INSTRUCTIONS FOR FREELANCER:
-"Please review this {target_language} marketing copy and fix any robotic/unnatural phrasing.
-Keep the same structure and meaning, just make it sound native.
-Focus on making the emotional intensity match the original."
-
-WHAT TO CHECK:
-- Sounds natural, not robotic
-- Idioms are properly localized
-- Persuasive elements maintain impact
-- Grammar and spelling are perfect
-- Cultural references make sense
-"""
-
-        print(instructions)
-
-        return instructions
+        return self.DIALECT_GUIDELINES

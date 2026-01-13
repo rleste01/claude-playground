@@ -1,48 +1,213 @@
 # Product Arbitrage Suite Configuration
 
-# Target markets for translation
+# Target markets with dialect support
 target_markets:
+  # French markets
   - language: "french"
-    countries: ["france", "belgium", "switzerland", "canada"]
+    dialect: "european"
+    countries: ["france", "belgium", "switzerland"]
     currency: "EUR"
-    price_multiplier: 0.9  # Adjust pricing for local market
-  - language: "german"
-    countries: ["germany", "austria", "switzerland"]
-    currency: "EUR"
-    price_multiplier: 0.95
-  - language: "spanish"
-    countries: ["spain", "mexico", "argentina", "colombia"]
-    currency: "EUR"
-    price_multiplier: 0.7
+    currency_symbol: "€"
+    price_multiplier: 0.9
+    fb_locale: "fr_FR"
+  - language: "french"
+    dialect: "canadian"
+    countries: ["canada"]
+    currency: "CAD"
+    currency_symbol: "$"
+    price_multiplier: 0.75
+    fb_locale: "fr_CA"
 
-# Ad monitoring settings
+  # German markets
+  - language: "german"
+    dialect: "standard"
+    countries: ["germany", "austria"]
+    currency: "EUR"
+    currency_symbol: "€"
+    price_multiplier: 0.95
+    fb_locale: "de_DE"
+  - language: "german"
+    dialect: "swiss"
+    countries: ["switzerland"]
+    currency: "CHF"
+    currency_symbol: "CHF"
+    price_multiplier: 1.1
+    fb_locale: "de_CH"
+
+  # Spanish markets
+  - language: "spanish"
+    dialect: "european"
+    countries: ["spain"]
+    currency: "EUR"
+    currency_symbol: "€"
+    price_multiplier: 0.7
+    fb_locale: "es_ES"
+  - language: "spanish"
+    dialect: "latin_american"
+    countries: ["mexico", "argentina", "colombia", "chile"]
+    currency: "USD"
+    currency_symbol: "$"
+    price_multiplier: 0.5
+    fb_locale: "es_LA"
+
+  # Portuguese markets
+  - language: "portuguese"
+    dialect: "brazilian"
+    countries: ["brazil"]
+    currency: "BRL"
+    currency_symbol: "R$"
+    price_multiplier: 0.4
+    fb_locale: "pt_BR"
+  - language: "portuguese"
+    dialect: "european"
+    countries: ["portugal"]
+    currency: "EUR"
+    currency_symbol: "€"
+    price_multiplier: 0.65
+    fb_locale: "pt_PT"
+
+  # Italian market
+  - language: "italian"
+    dialect: "standard"
+    countries: ["italy"]
+    currency: "EUR"
+    currency_symbol: "€"
+    price_multiplier: 0.75
+    fb_locale: "it_IT"
+
+  # Dutch markets
+  - language: "dutch"
+    dialect: "standard"
+    countries: ["netherlands", "belgium"]
+    currency: "EUR"
+    currency_symbol: "€"
+    price_multiplier: 0.9
+    fb_locale: "nl_NL"
+
+  # Polish market
+  - language: "polish"
+    dialect: "standard"
+    countries: ["poland"]
+    currency: "PLN"
+    currency_symbol: "zł"
+    price_multiplier: 0.4
+    fb_locale: "pl_PL"
+
+# Discovery/validation stage settings
+discovery:
+  enabled: true
+  daily_budget: 15  # Low-spend testing budget
+  test_duration_days: 3
+  min_clicks: 50
+  success_metrics:
+    min_ctr: 0.02  # 2% click-through rate
+    max_cpa: 15  # Maximum cost per acquisition
+    min_conversion_rate: 0.01  # 1% landing page conversion
+  auto_scale_on_success: true
+  scale_multiplier: 3  # Scale budget 3x if successful
+
+# Ad monitoring settings (automated)
 ad_monitoring:
+  enabled: true
   min_days_running: 14  # Only consider ads running this many days
-  check_interval_hours: 24
+  auto_scrape: true  # Automatically scrape Facebook Ad Library
+  scrape_interval_hours: 24
+  max_ads_per_niche: 20
   niches:
     - "productivity"
     - "sleep"
+    - "insomnia"
+    - "focus"
     - "fitness"
+    - "weight loss"
+    - "muscle building"
     - "relationships"
+    - "dating"
+    - "marriage"
     - "money"
+    - "investing"
     - "business"
+    - "side hustle"
+    - "anxiety"
+    - "stress"
+    - "confidence"
+    - "communication"
+
+# YouTube video discovery (automated)
+youtube:
+  auto_discover: true
+  min_views: 100000
+  max_age_days: 730  # Videos from last 2 years
+  prefer_channels:
+    - "doctors"
+    - "phd"
+    - "expert"
+    - "professor"
+  videos_per_topic: 4
+  require_english_captions: true
 
 # Content generation
 content:
   ai_model: "claude-3-5-sonnet-20241022"
-  youtube_research_videos: 4  # Number of videos to research per topic
-  min_video_views: 100000
-  output_format: "pdf"  # pdf, notion, markdown
+  output_format: "markdown"  # markdown, then convert to PDF
+  include_images: false  # Set true to generate placeholder images
+  checklist_format: true
+  tone: "casual"  # casual, professional, friendly
+  target_pages: 12
+
+# Competitor analysis (automated)
+competitor_analysis:
+  enabled: true
+  search_depth: 3  # Pages of Google results to analyze
+  check_platforms:
+    - "google"
+    - "gumroad"
+    - "etsy"
+  max_competitors: 20
+  analyze_pricing: true
+  analyze_positioning: true
+
+# Pricing optimization (automated)
+pricing:
+  auto_optimize: true
+  based_on:
+    - "competitor_prices"
+    - "market_purchasing_power"
+    - "perceived_value"
+  min_price: 17
+  max_price: 197
+  preferred_endings: [7, 9, 97, 99]  # Price endings that convert well
 
 # Funnel settings
 funnel:
-  price_range_min: 17
-  price_range_max: 97
-  default_price: 27
+  auto_analyze: true
+  extract_psychological_triggers: true
+  preserve_structure: true
+  max_sections: 7  # Keep it simple
 
 # Automation settings
 automation:
+  auto_find_winning_ads: true
+  auto_discover_youtube_videos: true
+  auto_analyze_competitors: true
+  auto_optimize_pricing: true
   auto_translate: true
   auto_generate_content: true
   auto_create_landing_page: true
-  require_human_review: true  # Review before going live
+  auto_generate_ad_copy: true
+  require_human_review: false  # Set true to review before deploying
+
+# AI settings
+ai:
+  provider: "anthropic"  # Only Anthropic
+  model: "claude-3-5-sonnet-20241022"
+  max_retries: 3
+  temperature: 0.7
+  cache_responses: true
+
+# Output settings
+output:
+  base_dir: "./output"
+  create_subdirs: true
+  save_intermediate_files: true
+  generate_report: true
