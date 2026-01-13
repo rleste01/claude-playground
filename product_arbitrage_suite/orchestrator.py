@@ -100,31 +100,43 @@ class ProductArbitrageOrchestrator:
 
         # STEP 1: Market Analysis
         print("\n📊 STEP 1: Market Analysis")
+        print(f"   🎯 Analyzing market gap for '{niche}' in {target_market}...")
         market_gap = self.market_analyzer.analyze_gap(niche, target_market)
         assets['market_analysis'] = market_gap
+        print(f"   ✓ Market analysis complete")
 
         # STEP 2: Analyze Winning Funnel
         print("\n\n🔍 STEP 2: Analyze Winning Funnel")
+        print(f"   🌐 Scraping and analyzing: {funnel_url[:60]}...")
         funnel_analysis = self.funnel_analyzer.analyze_funnel(funnel_url)
         assets['funnel_analysis'] = funnel_analysis
+        print(f"   ✓ Funnel structure extracted")
 
         # STEP 3: Create Product Content
         print("\n\n✍️  STEP 3: Generate Product Content")
+        if youtube_videos:
+            print(f"   📹 Using {len(youtube_videos)} provided video(s)")
+        else:
+            print(f"   🤖 Auto-discovering YouTube videos for '{niche}'...")
+
         product_content = self.content_generator.create_from_youtube(
             topic=niche,
             video_urls=youtube_videos,
             output_path=os.path.join(output_dir, f"{niche.replace(' ', '_')}_product.pdf")
         )
         assets['product_content'] = product_content
+        print(f"   ✓ Product content generated")
 
         # STEP 4: Create Funnel Blueprint
         print("\n\n🔧 STEP 4: Create Funnel Blueprint (English)")
+        print(f"   📝 Creating customized funnel for '{niche}'...")
         funnel_blueprint = self.funnel_analyzer.recreate_funnel_blueprint(
             funnel_analysis,
             new_topic=niche,
             language="english"
         )
         assets['funnel_blueprint_en'] = funnel_blueprint
+        print(f"   ✓ Funnel blueprint created")
 
         # STEP 5: Translate Everything
         if self.config['automation']['auto_translate']:
@@ -132,6 +144,7 @@ class ProductArbitrageOrchestrator:
             print(f"\n\n🌍 STEP 5: Translate to {target_market.title()}{dialect_text}")
 
             # Translate funnel
+            print(f"   📄 Translating funnel components...")
             translated_funnel = self.translator.translate_funnel(
                 funnel_blueprint,
                 target_market,
@@ -140,6 +153,7 @@ class ProductArbitrageOrchestrator:
             assets['funnel_blueprint_translated'] = translated_funnel
 
             # Translate product content
+            print(f"   📚 Translating product content...")
             translated_product = self.translator.translate_product_content(
                 product_content,
                 target_market,
@@ -153,17 +167,19 @@ class ProductArbitrageOrchestrator:
             )
             with open(translated_path, 'w', encoding='utf-8') as f:
                 f.write(translated_product)
+            print(f"   💾 Saved translated product to: {translated_path}")
 
             assets['product_content_translated'] = translated_product
 
             # Generate testimonials in target language
-            print(f"   Generating testimonials in {target_market}...")
+            print(f"   💬 Generating testimonials in {target_market}...")
             testimonials = self.ai_helper.generate_testimonials(
                 niche,
                 num_testimonials=5,
                 language=target_market
             )
             assets['testimonials'] = testimonials
+            print(f"   ✓ Generated {len(testimonials)} testimonials")
 
         # STEP 6: Build Landing Page
         if self.config['automation']['auto_create_landing_page']:
@@ -171,6 +187,7 @@ class ProductArbitrageOrchestrator:
 
             landing_page_path = os.path.join(output_dir, "landing_page.html")
 
+            print(f"   🎨 Building HTML landing page...")
             html = self.landing_page_builder.build_page(
                 funnel_blueprint=assets.get('funnel_blueprint_translated', funnel_blueprint),
                 testimonials=assets.get('testimonials', []),
@@ -178,9 +195,10 @@ class ProductArbitrageOrchestrator:
             )
 
             assets['landing_page'] = landing_page_path
+            print(f"   💾 Saved HTML to: {landing_page_path}")
 
             # Generate Lovable prompt
-            print("\n   Generating Lovable.ai prompt...")
+            print(f"   🤖 Generating Lovable.ai prompt...")
             lovable_prompt = self.landing_page_builder.generate_lovable_prompt(
                 assets.get('funnel_blueprint_translated', funnel_blueprint)
             )
@@ -190,6 +208,7 @@ class ProductArbitrageOrchestrator:
                 f.write(lovable_prompt)
 
             assets['lovable_prompt'] = lovable_path
+            print(f"   ✓ Lovable prompt saved to: {lovable_path}")
 
         # STEP 7: Summary & Next Steps
         print("\n\n" + "="*70)

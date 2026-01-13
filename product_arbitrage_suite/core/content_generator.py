@@ -123,6 +123,10 @@ class ContentGenerator:
         if not research_data:
             raise ValueError("No research data provided")
 
+        total_research_chars = sum(len(r) for r in research_data)
+        print(f"   📚 Processing {total_research_chars:,} characters of research data...")
+        print(f"   🤖 AI is synthesizing content (this may take 30-60 seconds)...")
+
         content = self.ai_helper.create_product_from_research(
             topic=topic,
             research_data=research_data,
@@ -131,7 +135,8 @@ class ContentGenerator:
             pages=target_pages
         )
 
-        print(f"   ✓ Generated {len(content)} characters")
+        print(f"   ✓ Generated {len(content):,} characters (~{len(content)//500} pages)")
+        print(f"   ✓ Product creation complete")
 
         return content
 

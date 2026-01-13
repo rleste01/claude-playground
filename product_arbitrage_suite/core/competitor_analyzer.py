@@ -62,13 +62,17 @@ class CompetitorAnalyzer:
         }
 
         # Search Google in target language
+        print(f"   🔍 Searching Google in {language}...")
         competitors = self._search_google_competitors(niche, language, max_competitors)
         analysis['competitors'] = competitors
         analysis['total_found'] = len(competitors)
+        print(f"   ✓ Found {len(competitors)} Google results")
 
         # Search Gumroad
+        print(f"   🛍️ Searching Gumroad...")
         gumroad_competitors = self._search_gumroad(niche, language)
         analysis['competitors'].extend(gumroad_competitors)
+        print(f"   ✓ Found {len(gumroad_competitors)} Gumroad products")
 
         # Analyze pricing
         prices = [c['price'] for c in analysis['competitors'] if c.get('price')]
@@ -103,11 +107,14 @@ class CompetitorAnalyzer:
 
         # Build search query in target language
         search_terms = self._get_search_terms(niche, language)
+        print(f"      🔎 Trying {len(search_terms[:3])} search variations...")
 
-        for search_term in search_terms[:3]:  # Try top 3 search variations
+        for i, search_term in enumerate(search_terms[:3], 1):  # Try top 3 search variations
             try:
+                print(f"      {i}. \"{search_term}\"")
                 results = self._google_search(search_term, language, limit=10)
                 competitors.extend(results)
+                print(f"         ✓ Found {len(results)} results")
 
                 if len(competitors) >= max_results:
                     break
@@ -115,7 +122,7 @@ class CompetitorAnalyzer:
                 time.sleep(2)  # Be nice to Google
 
             except Exception as e:
-                print(f"   Warning: Google search failed: {str(e)}")
+                print(f"      ⚠️ Search failed: {str(e)}")
                 continue
 
         # Deduplicate by URL
