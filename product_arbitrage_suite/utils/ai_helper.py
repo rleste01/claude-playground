@@ -8,7 +8,7 @@ from anthropic import Anthropic
 class AIHelper:
     """Helper class for AI-powered content generation and analysis."""
 
-    def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-5-sonnet-20241022"):
+    def __init__(self, api_key: Optional[str] = None, model: str = "claude-3-5-sonnet-20250115"):
         """
         Initialize AI helper.
 
