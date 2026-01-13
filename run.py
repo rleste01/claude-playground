@@ -30,16 +30,16 @@ def cmd_full(args):
     """Run full automation pipeline."""
     orchestrator = ProductArbitrageOrchestrator(args.config)
 
+    # YouTube videos are now optional - will auto-discover if not provided
     if not args.youtube_videos:
-        print("Error: Please provide YouTube video URLs for research")
-        print("Example: --youtube-videos url1 url2 url3 url4")
-        sys.exit(1)
+        print("ℹ️  No YouTube videos provided - will auto-discover videos")
 
     orchestrator.full_automation(
         niche=args.niche,
         funnel_url=args.funnel_url,
         youtube_videos=args.youtube_videos,
         target_market=args.target_market,
+        dialect=args.dialect,
         output_dir=args.output
     )
 
@@ -60,9 +60,9 @@ def cmd_research(args):
     """Research and create product content only."""
     orchestrator = ProductArbitrageOrchestrator(args.config)
 
+    # YouTube videos are now optional - will auto-discover if not provided
     if not args.youtube_videos:
-        print("Error: Please provide YouTube video URLs for research")
-        sys.exit(1)
+        print("ℹ️  No YouTube videos provided - will auto-discover videos")
 
     orchestrator.research_only(
         topic=args.topic,
@@ -110,13 +110,17 @@ def main():
     full_parser.add_argument(
         '--youtube-videos',
         nargs='+',
-        required=True,
-        help='YouTube video URLs for research (space-separated)'
+        required=False,
+        help='YouTube video URLs for research (optional - will auto-discover if not provided)'
     )
     full_parser.add_argument(
         '--target-market',
         default='french',
-        help='Target market (default: french)'
+        help='Target market language (default: french)'
+    )
+    full_parser.add_argument(
+        '--dialect',
+        help='Specific dialect (e.g., brazilian, latin_american, canadian)'
     )
     full_parser.add_argument('--output', default='./output', help='Output directory')
     full_parser.set_defaults(func=cmd_full)
@@ -145,8 +149,8 @@ def main():
     research_parser.add_argument(
         '--youtube-videos',
         nargs='+',
-        required=True,
-        help='YouTube video URLs (space-separated)'
+        required=False,
+        help='YouTube video URLs (optional - will auto-discover if not provided)'
     )
     research_parser.add_argument(
         '--output',

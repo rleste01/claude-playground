@@ -2,6 +2,7 @@
 
 from typing import List, Dict, Optional
 from ..utils.youtube_helper import YouTubeResearcher
+from ..utils.auto_youtube_finder import AutomatedYouTubeFinder
 from ..utils.ai_helper import AIHelper
 import os
 
@@ -9,29 +10,44 @@ import os
 class ContentGenerator:
     """Generate digital product content using AI and research."""
 
-    def __init__(self, ai_helper: Optional[AIHelper] = None):
+    def __init__(
+        self,
+        ai_helper: Optional[AIHelper] = None,
+        auto_discover: bool = True,
+        min_views: int = 100000
+    ):
         """
         Initialize content generator.
 
         Args:
             ai_helper: AI helper instance
+            auto_discover: Enable automatic YouTube video discovery
+            min_views: Minimum view count for auto-discovered videos
         """
         self.ai_helper = ai_helper or AIHelper()
         self.youtube = YouTubeResearcher()
+        self.auto_discover = auto_discover
+        self.min_views = min_views
+
+        if auto_discover:
+            self.auto_finder = AutomatedYouTubeFinder(
+                min_views=min_views,
+                prefer_expert_channels=True
+            )
 
     def research_topic(
         self,
         topic: str,
         video_urls: Optional[List[str]] = None,
         num_videos: int = 4,
-        min_views: int = 100000
+        min_views: Optional[int] = None
     ) -> List[str]:
         """
-        Research a topic using YouTube videos.
+        Research a topic using YouTube videos with automatic discovery.
 
         Args:
             topic: Topic to research
-            video_urls: Optional list of specific video URLs
+            video_urls: Optional list of specific video URLs (auto-discovers if None)
             num_videos: Number of videos to research
             min_views: Minimum view count for videos
 
@@ -40,10 +56,33 @@ class ContentGenerator:
         """
         print(f"\n📚 Researching Topic: {topic}")
 
-        if not video_urls:
-            print(f"   ⚠️  No video URLs provided")
+        # Auto-discover videos if not provided and auto_discover is enabled
+        if not video_urls and self.auto_discover:
+            print(f"   🤖 Auto-discovering YouTube videos...")
+
+            try:
+                videos = self.auto_finder.find_videos_multi_query(
+                    topic=topic,
+                    num_videos=num_videos
+                )
+
+                video_urls = self.auto_finder.export_video_urls(videos)
+
+                if not video_urls:
+                    print(f"   ⚠️  No videos found automatically")
+                    return []
+
+                print(f"   ✓ Auto-discovered {len(video_urls)} videos")
+
+            except Exception as e:
+                print(f"   ✗ Auto-discovery failed: {str(e)}")
+                print(f"   Please provide video URLs manually")
+                return []
+
+        elif not video_urls:
+            print(f"   ⚠️  No video URLs provided and auto-discovery disabled")
             print(f"   Search YouTube for: '{topic}'")
-            print(f"   Find {num_videos} videos with {min_views:,}+ views")
+            print(f"   Find {num_videos} videos with {min_views or self.min_views:,}+ views")
             print(f"   Look for: doctors, experts, high-quality content")
             return []
 

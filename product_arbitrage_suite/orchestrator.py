@@ -32,10 +32,18 @@ class ProductArbitrageOrchestrator:
         # Initialize modules
         self.ai_helper = AIHelper()
         self.ad_monitor = AdMonitor(
-            min_days_running=self.config['ad_monitoring']['min_days_running']
+            min_days_running=self.config.get('ad_monitoring', {}).get('min_days_running', 14)
         )
         self.funnel_analyzer = FunnelAnalyzer(self.ai_helper)
-        self.content_generator = ContentGenerator(self.ai_helper)
+
+        # Initialize content generator with auto-discovery settings
+        youtube_config = self.config.get('youtube', {})
+        self.content_generator = ContentGenerator(
+            self.ai_helper,
+            auto_discover=youtube_config.get('auto_discover', True),
+            min_views=youtube_config.get('min_views', 100000)
+        )
+
         self.translator = Translator(self.ai_helper)
         self.landing_page_builder = LandingPageBuilder()
         self.market_analyzer = MarketAnalyzer()
@@ -59,18 +67,20 @@ class ProductArbitrageOrchestrator:
         self,
         niche: str,
         funnel_url: str,
-        youtube_videos: List[str],
+        youtube_videos: Optional[List[str]] = None,
         target_market: str = "french",
+        dialect: Optional[str] = None,
         output_dir: str = "./output"
     ) -> Dict:
         """
-        Complete end-to-end automation.
+        Complete end-to-end automation with automatic video discovery.
 
         Args:
             niche: Product niche
             funnel_url: URL of winning funnel to copy
-            youtube_videos: List of YouTube URLs for research
+            youtube_videos: Optional list of YouTube URLs (auto-discovers if None)
             target_market: Target market/language
+            dialect: Optional dialect (e.g., 'brazilian', 'latin_american')
             output_dir: Output directory
 
         Returns:
@@ -118,19 +128,22 @@ class ProductArbitrageOrchestrator:
 
         # STEP 5: Translate Everything
         if self.config['automation']['auto_translate']:
-            print(f"\n\n🌍 STEP 5: Translate to {target_market.title()}")
+            dialect_text = f" ({dialect})" if dialect else ""
+            print(f"\n\n🌍 STEP 5: Translate to {target_market.title()}{dialect_text}")
 
             # Translate funnel
             translated_funnel = self.translator.translate_funnel(
                 funnel_blueprint,
-                target_market
+                target_market,
+                dialect=dialect
             )
             assets['funnel_blueprint_translated'] = translated_funnel
 
             # Translate product content
             translated_product = self.translator.translate_product_content(
                 product_content,
-                target_market
+                target_market,
+                dialect=dialect
             )
 
             # Save translated product

@@ -44,26 +44,43 @@ playwright install
 
 ### Run Full Automation
 
+**Fully Automated (no manual video hunting):**
 ```bash
 python run.py full \
   --niche "fix sleep naturally" \
   --funnel-url "https://example.com/winning-sleep-funnel" \
-  --youtube-videos \
-    "https://youtube.com/watch?v=VIDEO1" \
-    "https://youtube.com/watch?v=VIDEO2" \
-    "https://youtube.com/watch?v=VIDEO3" \
-    "https://youtube.com/watch?v=VIDEO4" \
-  --target-market french \
-  --output ./output/sleep_french
+  --target-market portuguese \
+  --dialect brazilian \
+  --output ./output/sleep_brazilian
 ```
+
+**Or with specific videos (optional):**
+```bash
+python run.py full \
+  --niche "fix sleep naturally" \
+  --funnel-url "https://example.com/winning-sleep-funnel" \
+  --youtube-videos URL1 URL2 URL3 URL4 \
+  --target-market spanish \
+  --dialect latin_american \
+  --output ./output/sleep_latam
+```
+
+**What Happens Automatically:**
+- 🤖 Auto-discovers winning YouTube videos (100k+ views, expert channels)
+- 🤖 Auto-extracts video transcripts
+- 🤖 Auto-generates product content from research
+- 🤖 Auto-translates to target dialect (Brazilian Portuguese, etc.)
+- 🤖 Auto-creates landing page
+- 🤖 Auto-generates testimonials in target language
 
 **Output:**
 - ✅ Market analysis report
-- ✅ Product content (English + translated)
+- ✅ Product content (English + translated with proper dialect)
 - ✅ Landing page HTML
 - ✅ Funnel blueprint
 - ✅ Lovable.ai prompt for rebuilding
 - ✅ Testimonials in target language
+- ✅ Auto-discovered video list with sources
 
 ## 🛠️ Usage
 
@@ -172,17 +189,24 @@ analysis = funnel_analyzer.analyze_funnel(url)
 # - Overall structure
 ```
 
-### Step 3: Generate Product Content
+### Step 3: Auto-Discover Research & Generate Product
 
 ```python
-# Research from YouTube
-transcripts = youtube.research_topic(
+# AUTOMATIC: Find high-quality YouTube videos
+# - Searches multiple query variations
+# - Prioritizes expert channels (doctors, PhDs)
+# - Ranks by views, recency, quality
+# - No manual video hunting required!
+
+videos = auto_finder.find_videos_multi_query(
     topic="fix sleep naturally",
-    video_urls=[...],  # 4 videos, 100k+ views each
-    min_views=100000
+    num_videos=4  # Automatically finds top 4
 )
 
-# AI generates structured product
+# Auto-extract transcripts
+transcripts = [get_transcript(v) for v in videos]
+
+# AI generates structured product from research
 product = content_generator.generate_product(
     topic=topic,
     research_data=transcripts,
@@ -193,17 +217,40 @@ product = content_generator.generate_product(
 
 **Output:** 12-page actionable guide with checklists and step-by-step protocols.
 
-### Step 4: Translate Everything
+**Auto-Discovery Quality Scoring:**
+- View count (100k+ minimum)
+- Expert channel detection (doctor, PhD, professor)
+- Video recency (last 2 years preferred)
+- Content length (10-60 minutes sweet spot)
+
+### Step 4: Translate with Proper Dialect
 
 ```python
-# Translate to target market
-translator.translate_funnel(blueprint, target_language="french")
-translator.translate_product_content(product, "french")
+# Translate to target market with specific dialect
+translator.translate_funnel(
+    blueprint,
+    target_language="portuguese",
+    dialect="brazilian"  # Brazilian Portuguese, not European
+)
 
-# Adjust price for local purchasing power
-# French market: 0.9x multiplier
-# Spanish market: 0.7x multiplier
+translator.translate_product_content(
+    product,
+    "portuguese",
+    dialect="brazilian"
+)
+
+# Automatically handles:
+# - Local idioms ("tá" vs "está")
+# - Proper currency (R$ not €)
+# - Price adjustments (0.4x for Brazilian market)
+# - Cultural context
 ```
+
+**Supported Dialects:**
+- Portuguese: brazilian, european
+- Spanish: latin_american, european, mexican
+- French: canadian, european
+- German: swiss, standard
 
 ### Step 5: Build Landing Page
 
