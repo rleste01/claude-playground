@@ -52,6 +52,7 @@ class YouTubeResearcher:
             raise ValueError(f"Invalid YouTube URL: {video_url}")
 
         try:
+            print(f"         🎬 Fetching transcript for video {video_id}...")
             transcript_list = YouTubeTranscriptApi.get_transcript(
                 video_id,
                 languages=[language]
@@ -59,6 +60,7 @@ class YouTubeResearcher:
 
             # Combine all text
             full_transcript = ' '.join([item['text'] for item in transcript_list])
+            print(f"         ✓ Extracted {len(full_transcript):,} characters ({len(transcript_list)} segments)")
             return full_transcript
 
         except Exception as e:
@@ -131,16 +133,21 @@ class YouTubeResearcher:
             print(f"   Search YouTube for: '{topic}'")
             return []
 
+        print(f"   📥 Extracting transcripts from {len(video_urls[:num_videos])} videos...")
         transcripts = []
 
         for i, url in enumerate(video_urls[:num_videos], 1):
             try:
-                print(f"   [{i}/{num_videos}] Extracting transcript from: {url}")
+                print(f"   [{i}/{num_videos}] Processing: {url[:60]}...")
                 transcript = self.get_transcript(url)
                 transcripts.append(transcript)
-                print(f"   ✓ Extracted {len(transcript)} characters")
+                print(f"      ✓ Success")
             except Exception as e:
-                print(f"   ✗ Failed: {str(e)}")
+                print(f"      ✗ Failed: {str(e)}")
+
+        print(f"   ✓ Successfully extracted {len(transcripts)}/{num_videos} transcripts")
+        total_chars = sum(len(t) for t in transcripts)
+        print(f"   📊 Total research content: {total_chars:,} characters")
 
         return transcripts
 

@@ -72,6 +72,7 @@ class AutomatedYouTubeFinder:
     def _search_videos(self, topic: str, limit: int = 20) -> List[Dict]:
         """Search YouTube for videos."""
         try:
+            print(f"      🔍 Searching YouTube...")
             # Use youtubesearchpython for initial search
             search = VideosSearch(topic, limit=limit)
             results = search.result()
@@ -92,14 +93,16 @@ class AutomatedYouTubeFinder:
 
                 videos.append(video_data)
 
+            print(f"      ✓ Found {len(videos)} videos")
             return videos
 
         except Exception as e:
-            print(f"   Warning: Search failed: {str(e)}")
+            print(f"   ⚠️ Warning: Search failed: {str(e)}")
             return []
 
     def _filter_and_rank_videos(self, videos: List[Dict]) -> List[Dict]:
         """Filter videos by criteria and rank by quality."""
+        print(f"      📊 Filtering and ranking {len(videos)} videos...")
         qualified = []
 
         for video in videos:
@@ -116,6 +119,7 @@ class AutomatedYouTubeFinder:
         # Sort by quality score
         qualified.sort(key=lambda x: x['quality_score'], reverse=True)
 
+        print(f"      ✓ {len(qualified)} videos passed quality filters")
         return qualified
 
     def _calculate_quality_score(self, video: Dict) -> float:
@@ -230,6 +234,7 @@ class AutomatedYouTubeFinder:
         seen_ids = set()
 
         # Try main query
+        print(f"   🎯 Main search: '{topic}'")
         main_results = self._search_videos(topic, limit=20)
         for video in main_results:
             if video['video_id'] not in seen_ids:
@@ -238,15 +243,18 @@ class AutomatedYouTubeFinder:
 
         # Try alternative queries
         alternatives = self.get_alternative_searches(topic)[:3]  # Try top 3 alternatives
+        print(f"   🔄 Trying {len(alternatives)} alternative searches...")
 
-        for alt_query in alternatives:
-            print(f"   Trying: '{alt_query}'")
+        for i, alt_query in enumerate(alternatives, 1):
+            print(f"   {i}. '{alt_query}'")
             alt_results = self._search_videos(alt_query, limit=10)
 
             for video in alt_results:
                 if video['video_id'] not in seen_ids:
                     all_videos.append(video)
                     seen_ids.add(video['video_id'])
+
+        print(f"   📦 Collected {len(all_videos)} unique videos total")
 
         # Filter and rank all collected videos
         qualified_videos = self._filter_and_rank_videos(all_videos)

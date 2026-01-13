@@ -84,24 +84,28 @@ class AutomatedAdScraper:
 
         try:
             # Navigate to search page
-            print(f"   Loading: {search_url}")
+            print(f"   🌐 Loading Facebook Ad Library...")
             await self.page.goto(search_url, wait_until="networkidle", timeout=30000)
 
             # Wait for results to load
+            print(f"   ⏳ Waiting for search results...")
             await self.page.wait_for_selector('[data-testid="search-results"]', timeout=10000)
+            print(f"   ✓ Results loaded")
 
             # Scroll to load more results
+            print(f"   📜 Scrolling to load more ads...")
             await self._scroll_to_load_more(max_scrolls=5)
 
             # Extract ad cards
+            print(f"   📊 Extracting ad data...")
             ads = await self._extract_ads(min_days_running, max_results)
 
-            print(f"   ✓ Found {len(ads)} qualifying ads")
+            print(f"   ✓ Found {len(ads)} ads running {min_days_running}+ days")
 
             return ads
 
         except Exception as e:
-            print(f"   ✗ Error scraping: {str(e)}")
+            print(f"   ⚠️ Error scraping: {str(e)}")
             return []
 
     async def _scroll_to_load_more(self, max_scrolls: int = 5):
@@ -116,19 +120,21 @@ class AutomatedAdScraper:
 
         # Get all ad containers
         ad_containers = await self.page.query_selector_all('[data-testid="ad-card"]')
+        print(f"      🔍 Found {len(ad_containers)} ad containers, filtering...")
 
-        for container in ad_containers[:max_results * 2]:  # Get extra in case some don't qualify
+        for i, container in enumerate(ad_containers[:max_results * 2], 1):  # Get extra in case some don't qualify
             try:
                 ad_data = await self._extract_single_ad(container)
 
                 if ad_data and ad_data.get('days_running', 0) >= min_days_running:
                     ads.append(ad_data)
+                    print(f"      ✓ Ad {len(ads)}: {ad_data.get('days_running')} days running")
 
                 if len(ads) >= max_results:
                     break
 
             except Exception as e:
-                print(f"   Warning: Failed to extract ad: {str(e)}")
+                print(f"      ⚠️ Failed to extract ad {i}: {str(e)}")
                 continue
 
         return ads

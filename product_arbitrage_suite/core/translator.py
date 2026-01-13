@@ -250,22 +250,39 @@ IMPORTANT DIALECT REQUIREMENTS:
 - Make it sound authentic to native speakers of this specific dialect
 """
 
-        prompt = f"""Translate this {content_type} to {dialect_info['full_name']}.
+        prompt = f"""You are an expert translator and native copywriter for {dialect_info['full_name']}.
+
+Your job is to adapt this {content_type} into {dialect_info['full_name']} in a way that sounds COMPLETELY NATURAL and PERSUASIVE to native speakers.
 
 {dialect_instruction}
 
-CRITICAL REQUIREMENTS:
-- Maintain the same emotional intensity and persuasion
-- Keep the same structure and formatting
-- Adapt idioms naturally (don't translate literally)
-- Preserve any formatting like bullets, numbers, headings
-- Make it sound native and natural, not robotic or awkward
-- Match the tone and style of the original
+CRITICAL TRANSLATION PHILOSOPHY:
+⭐ PRIORITY #1: Sound natural and native - like a native copywriter wrote it from scratch
+⭐ PRIORITY #2: Maintain emotional impact and persuasiveness
+⭐ PRIORITY #3: Preserve the core meaning and intent
+
+WHEN IN DOUBT: Choose what sounds better and more persuasive to a native speaker over literal word-for-word accuracy.
+
+SPECIFIC REQUIREMENTS:
+✓ Use expressions, idioms, and phrasing that native speakers actually use in daily life
+✓ Adapt cultural references to be relevant to the target audience
+✓ Make it emotionally compelling - native speakers should FEEL the message
+✓ Avoid awkward literal translations that technically work but sound robotic
+✓ Use the natural word order and sentence structures of the target language
+✓ Match the persuasive tone - this is marketing copy that needs to convert
+✓ Keep formatting (bullets, numbers, headings, line breaks)
+
+EXAMPLES OF GOOD vs BAD:
+❌ BAD: Literal word-for-word translation that sounds mechanical
+✅ GOOD: Natural phrasing that a native copywriter would use
+
+Think: "How would a talented native copywriter write this to persuade their own people?"
 
 CONTENT TO TRANSLATE:
 {content}
 
-Provide ONLY the translation, no explanations or meta-commentary."""
+Provide ONLY the translated content that sounds completely natural and persuasive to native {dialect_info['full_name']} speakers.
+No explanations, no meta-commentary - just the beautifully adapted copy."""
 
         return self.ai_helper.generate(prompt, max_tokens=4000)
 
