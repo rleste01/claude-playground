@@ -1,0 +1,48 @@
+# Product Arbitrage Suite Configuration
+
+# Target markets for translation
+target_markets:
+  - language: "french"
+    countries: ["france", "belgium", "switzerland", "canada"]
+    currency: "EUR"
+    price_multiplier: 0.9  # Adjust pricing for local market
+  - language: "german"
+    countries: ["germany", "austria", "switzerland"]
+    currency: "EUR"
+    price_multiplier: 0.95
+  - language: "spanish"
+    countries: ["spain", "mexico", "argentina", "colombia"]
+    currency: "EUR"
+    price_multiplier: 0.7
+
+# Ad monitoring settings
+ad_monitoring:
+  min_days_running: 14  # Only consider ads running this many days
+  check_interval_hours: 24
+  niches:
+    - "productivity"
+    - "sleep"
+    - "fitness"
+    - "relationships"
+    - "money"
+    - "business"
+
+# Content generation
+content:
+  ai_model: "claude-3-5-sonnet-20241022"
+  youtube_research_videos: 4  # Number of videos to research per topic
+  min_video_views: 100000
+  output_format: "pdf"  # pdf, notion, markdown
+
+# Funnel settings
+funnel:
+  price_range_min: 17
+  price_range_max: 97
+  default_price: 27
+
+# Automation settings
+automation:
+  auto_translate: true
+  auto_generate_content: true
+  auto_create_landing_page: true
+  require_human_review: true  # Review before going live
