@@ -17,7 +17,6 @@ scrapetube>=2.5.1
 
 # Data processing
 pandas>=2.0.0
-langdetect>=1.0.9
 
 # Utilities
 pillow>=10.0.0
